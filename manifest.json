@@ -1,0 +1,18 @@
+{
+  "name": "DeepL Page Translator",
+  "description": "Translate the entire page for free using DeepL",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "icons/16X16.png",
+    "32": "icons/32X32.png",
+    "48": "icons/48X48.png",
+    "128": "icons/128X128.png"
+  },
+  "action": {},
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "permissions": ["activeTab", "tabs", "scripting"],
+  "host_permissions": ["*://www.deepl.com/translator/*"]
+}
