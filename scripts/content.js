@@ -20,26 +20,26 @@
   let translateArray = []
 
   while (walker.nextNode()) {
-    if (/^\s*\S+/.test(walker.currentNode.textContent)) {
+    if (!/^[,.!@#$%^&*()\-_=+[\]{};':"\\|,.<>\/?\s]*$/.test(walker.currentNode.textContent)) {
       proxyArray = [...proxyArray, walker.currentNode]
-      translateArray = [...translateArray, walker.currentNode.textContent]
+      translateArray = [...translateArray, { 
+        textToTranslate: walker.currentNode.textContent
+      }]
     }
   }
 
   chrome.runtime.sendMessage({
-    type: 'translate', 
-    translateArray: translateArray.sort((a, b) => b.length - a.length)
+    type: 'translate',
+    translateArray: translateArray
+      .map((el, index) => {return {...el, index}})
+      .sort((a, b) => b.textToTranslate.length - a.textToTranslate.length)
   })
 
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type = 'translated') {
-      for (let i = message.index - message.translatedArray.length - 1; i < message.index; i++) {
-        proxyArray[i].textContent = translated
-      }
-
-      // for (let i = message.index - message.translatedArray.length - 1; i < message.index; i++) {
-      //   proxyArray[i].textContent = translated
-      // }
+      message.translatedArray.forEach(({ translatedText, index }) => {
+        proxyArray[index].textContent = translatedText
+      })
     }
   })
 })()

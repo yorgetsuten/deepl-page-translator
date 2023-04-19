@@ -1,5 +1,3 @@
-console.log('executedTranslateScript')
-
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === 'translate') {
     const translateTextArea = document.querySelector('div[_d-id="1"]')
@@ -29,16 +27,22 @@ chrome.runtime.onMessage.addListener((message) => {
           !skip ? index++ : skip = false
           fillTranslateTextArea()
         } else {
-          // console.log(message.translateArray)
+          chrome.runtime.sendMessage({ type: 'translated', translatedArray })
           observer.disconnect()
         }
       } else {
         mutations.forEach((mutation) => {
-          if (mutation.addedNodes.length === 1 && mutation.removedNodes.length === 0 && mutation.addedNodes[0].textContent) {
-            translatedArray = [...translatedArray, mutation.addedNodes[0].textContent]
+          if (mutation.addedNodes.length > 0 && mutation.removedNodes.length === 0 && mutation.addedNodes[0].textContent) {
+            translatedArray = [...translatedArray, { 
+              translatedText: mutation.addedNodes[0].textContent,
+              index: message.translateArray[index].index
+            }]
+
             if (translatedArray.length > Math.floor(message.translateArray.length / 10)) {
-              chrome.runtime.sendMessage({ type: 'translated', translatedArray, index })
+              chrome.runtime.sendMessage({ type: 'translated', translatedArray })
+              translatedArray = []
             }
+
             clearTranslateTextArea()
           }
         })

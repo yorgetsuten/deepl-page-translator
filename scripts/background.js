@@ -1,39 +1,46 @@
-chrome.action.onClicked.addListener((tab) => {
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: ['./scripts/content.js']
-  })
-
-  function executeTranslateScript(tabId) {
-    chrome.scripting.executeScript({
-      target: { tabId },
-      files: ['./scripts/translate.js']
-    })
-    console.log('executeTranslateScript')
-  }
-
-  chrome.tabs.query({ url: '*://www.deepl.com/translator/*' })
-    .then(async (tabs) => {
-      if (tabs.length > 0) {
-        executeTranslateScript(tabs[0].id)
-      } else {
-        executeTranslateScript(
-          (await chrome.tabs.create({ url: 'https://www.deepl.com/translator', active: false })).id
-        )
-      }
-    })
+chrome.action.onClicked.addListener(async (contentTab) => {
+  executeScript(contentTab.id, './scripts/content.js')
+  executeScript((await getTranslatorTabId()), './scripts/translate.js')
 })
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === 'translate') {
-    const { arrayToTranslate } = message
-    chrome.runtime.sendMessage({ type: 'translate', arrayToTranslate })
-  } else if (message.type === 'translated') {
-    const { translatedArray, index } = message
-    chrome.runtime.sendMessage({ type: 'translated', translatedArray, index })
-    // chrome.tabs.query({ url: '*://www.deepl.com/translator/*' })
-    //   .then(([tab]) => {
-    //     chrome.tabs.sendMessage(tab.id, { type: 'translated', translatedArray, index })
-    //   })
-  }
+  chrome.tabs.sendMessage(forwardTo(message.type), message)
 })
+
+
+
+let contentTabId
+let translatorTabId
+
+async function getTranslatorTabId() {
+  const tabs = await chrome.tabs.query({ url: '*://www.deepl.com/translator*' })
+
+  if (tabs.length === 0) {
+    return (await
+      chrome.tabs.create({ url: 'https://www.deepl.com/translator', active: false })
+    ).id
+  } else {
+    return tabs[0].id
+  }
+}
+
+function executeScript(tabId, script) {
+  chrome.scripting.executeScript({
+    target: {tabId},
+    files: [script]
+  })
+
+  if (script === './scripts/content.js') {
+    contentTabId = tabId
+  } else if (script === './scripts/translate.js') {
+    translatorTabId = tabId
+  }
+}
+
+function forwardTo(type) {
+  if (type === 'translate') {
+    return translatorTabId
+  } else if (type === 'translated') {
+    return contentTabId
+  }
+}
