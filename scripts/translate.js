@@ -1,5 +1,9 @@
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === 'translate') {
+let isBusy = false
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'translate' && !isBusy) {
+    isBusy = true
+
     const translateTextArea = document.querySelector('div[_d-id="1"]')
     const translatedTextArea = document.querySelector('div[_d-id="8"]')
 
@@ -37,10 +41,11 @@ chrome.runtime.onMessage.addListener((message) => {
 
     const observer = new MutationObserver((mutations) => {
       if (mutations[0].target.attributes[0].nodeValue === 'false') {
-        if (message.translateArray.length - 1 > index) {
+        if (joinedStrings.length - 1 > index) {
           !skip ? index++ : skip = false
           fillTranslateTextArea()
         } else {
+          isBusy = false
           observer.disconnect()
         }
       } else {
