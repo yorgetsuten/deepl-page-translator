@@ -1,5 +1,5 @@
 let isBusy = false
-
+// God bless whoever tries to read this
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'translate' && !isBusy) {
     isBusy = true
@@ -38,7 +38,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     let index = 0
     let skip = false
     let joinedStrings = joinStrings()
-
     const observer = new MutationObserver((mutations) => {
       if (mutations[0].target.attributes[0].nodeValue === 'false') {
         if (joinedStrings.length - 1 > index) {

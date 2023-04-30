@@ -12,7 +12,7 @@ chrome.action.onClicked.addListener(async (contentTab) => {
       }
     })
     .then(() => 
-      chrome.tabs.sendMessage(contentTab.id, { type: 'walk' })
+      chrome.tabs.sendMessage(contentTab.id, { type: 'untranslate' })
     )
     .catch(async ({ message }) => {
       if (message === 'Could not establish connection. Receiving end does not exist.') {
@@ -22,8 +22,8 @@ chrome.action.onClicked.addListener(async (contentTab) => {
     })
 })
 
-chrome.runtime.onMessage.addListener(async (message) => {
-  chrome.tabs.sendMessage((await forwardTo(message.type)), message)
+chrome.runtime.onMessage.addListener((message) => {
+  chrome.tabs.sendMessage(forwardTo(message.type), message)
 })
 
 async function getTranslatorTabId() {
