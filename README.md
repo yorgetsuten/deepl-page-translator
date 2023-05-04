@@ -10,7 +10,7 @@ If you want to see the untranslated version of the page, click the extension ico
 
 ![Image alt](https://github.com/sxdav/deepl-page-translator/blob/master/assets/doc/multitabUntranslate.gif)
 
-Clicking again will show the translated version again, but not the page again, the translator has some limitations. If you still want to retranslate the page, for example because the content has changed, refresh the page and click the extension icon.
+Clicking again will show the translated version but not the page cause the translator has some limitations. If you still want to retranslate the page, for example because the content has changed, refresh the page and click the extension icon.
 
 ## Just follow the instructions below to get started.
 
