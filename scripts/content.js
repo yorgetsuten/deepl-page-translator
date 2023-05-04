@@ -29,7 +29,6 @@ chrome.runtime.onMessage.addListener((message) => {
   
     chrome.runtime.sendMessage({ type: 'translate', translateArray })
   } else if (message.type === 'untranslate') {
-    console.log('untranslate')
     if (proxyArray[0].textContent === translatedArray[0]) {
       translateArray.forEach((untranslatedText, index) => {
         proxyArray[index].textContent = untranslatedText

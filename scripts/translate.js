@@ -1,5 +1,5 @@
 let isBusy = false
-// God bless whoever tries to read this
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'translate' && !isBusy) {
     isBusy = true
@@ -41,7 +41,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const observer = new MutationObserver((mutations) => {
       if (mutations[0].target.attributes[0].nodeValue === 'false') {
         if (joinedStrings.length - 1 > index) {
-          !skip ? index++ : skip = false
+          skip ? skip = false : index++
           fillTranslateTextArea()
         } else {
           isBusy = false
